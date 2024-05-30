@@ -138,41 +138,172 @@
 //     window.alert('All Notes Deleted')
 
 // }
+
+// let clrIndex=0;
+// var color=[];
+// console.log("Welcome to Magic Notes App. This is app.js");
+// let clr = document.querySelector('#clr');
+
+
+// clr.addEventListener('input',()=>{
+//  color[clrIndex++] = clr.value;
+// })
+
+
+// let updateId = -1;
+
+// // Add event listener for the add/update button
+// const addBtn = document.getElementById("addBtn");
+
+// var color1;
+// addBtn.addEventListener("click", function () {
+//   const addTxt = document.getElementById("addTxt").value;
+//    color1 =document.getElementById('clr');
+//   let notes = getNotes();
+//   if (addTxt.length !== 0) {
+//     if (updateId === -1) {
+//       notes.push(addTxt);
+//     } else {
+//       notes[updateId] = addTxt;
+//       updateId = -1;
+//       addBtn.innerHTML = "Add Note";
+//     }
+
+//     saveNotes(notes);
+//   }else{
+//     alert("Enter at least One character")
+//   }
+//   addTxt.value = "";
+//   console.log(notes);
+//   showNotes();
+// });
+
+// showNotes();
+
+// // Function to show elements from local storage
+// function showNotes() {
+//   const notes = getNotes();
+//   const notesElm = document.getElementById("notes");
+//   let html = "";
+
+//   notes.forEach((element, index) => {
+//     html += `
+//       <div class="noteCard my-2 mx-2 card" style="width: 18rem;   background-color: ${color[index]};">
+//         <div class="card-body">
+//           <h5 class="card-title">Note ${index + 1}</h5>
+//           <p class="card-text">${element}</p>
+//           <button id="${index}" onclick="deleteNode(${index})" class="btn btn-primary">Delete Note</button>
+//           <button id="${index}" onclick="editNode(${index})" class="btn btn-primary">Edit Note</button>
+//         </div>
+//       </div>`;
+//   });
+//   document.querySelector('#nothing').innerHTML=notes.length ? " " : `Nothing to show. Use "Add Notes" section above to add notes.`;
+//   notesElm.innerHTML =  html ;
+// }
+
+// function deleteNode(index) {
+//   console.log("Deleted note " + (index + 1));
+//   let notes = getNotes();
+//   notes.splice(index, 1);
+//   saveNotes(notes);
+//   showNotes();
+// }
+
+// const searchTxt = document.getElementById('searchTxt');
+// searchTxt.addEventListener('input', function () {
+//   const inputVal = searchTxt.value.toLowerCase();
+//   console.log("input event fired", inputVal);
+//   const noteCards = document.getElementsByClassName('noteCard');
+//   Array.from(noteCards).forEach((card) => {
+//     const cardText = card.getElementsByTagName('p')[0].innerText.toLowerCase();
+//     card.style.display = cardText.includes(inputVal) ? 'block' : 'none';
+//   });
+// });
+
+// function editNode(id) {
+//   console.log(id);
+//   const notes = getNotes();
+//   document.getElementById("addTxt").value = notes[id];
+//   updateId = id;
+//   addBtn.innerHTML = 'Update Note';
+// }
+
+// function getNotes() {
+//   let notes = localStorage.getItem("notes");
+//   return notes ? JSON.parse(notes) : [];
+// }
+
+// function saveNotes(notes) {
+//   localStorage.setItem("notes", JSON.stringify(notes));
+// }
+
+// // Animation
+// let arr1 = ['W', 'e', 'l', 'c', 'o', 'm', 'e', ' ', 't', 'o', ' ', 'M', 'a', 'g', 'i', 'c', ' ', 'N', 'o', 't', 'e', 's', ' ', 'A', 'p', 'p', 'l', 'i', 'c', 'a', 't', 'i', 'o', 'n'];
+// let ind1 = 0;
+// let str = "";
+// setInterval(() => {
+//   if (arr1.length === ind1) { ind1 = 0; str = "" }
+//   str += arr1[ind1++];
+//   document.querySelector('.wel').innerHTML = str + '|';
+// }, 80);
+
+// function deleteAll() {
+//   localStorage.clear();
+//   showNotes();
+//   window.alert('All Notes Deleted');
+// }
+
+
+let clrIndex = 0;
+var color = [];
 console.log("Welcome to Magic Notes App. This is app.js");
 
+// Handle color input
+let clr = document.querySelector('#clr');
+clr.addEventListener('input', () => {
+  color[clrIndex++] = clr.value;
+});
+
 let updateId = -1;
-
-// Add event listener for the add/update button
 const addBtn = document.getElementById("addBtn");
+
 addBtn.addEventListener("click", function () {
-  const addTxt = document.getElementById("addTxt");
+  const addTxt = document.getElementById("addTxt").value;
   let notes = getNotes();
+  let noteColors = getNoteColors();
 
-  if (updateId === -1) {
-    notes.push(addTxt.value);
+  if (addTxt.length !== 0) {
+    if (updateId === -1) {
+      notes.push(addTxt);
+      noteColors.push(clr.value);
+    } else {
+      notes[updateId] = addTxt;
+      noteColors[updateId] = clr.value;
+      updateId = -1;
+      addBtn.innerHTML = "Add Note";
+    }
+
+    saveNotes(notes, noteColors);
   } else {
-    notes[updateId] = addTxt.value;
-    updateId = -1;
-    addBtn.innerHTML = 'Add Note';
+    alert("Enter at least one character");
   }
-
-  saveNotes(notes);
-  addTxt.value = "";
-  console.log(notes);
+  
+  document.getElementById("addTxt").value = "";
   showNotes();
 });
 
 showNotes();
 
-// Function to show elements from local storage
 function showNotes() {
   const notes = getNotes();
+  const noteColors = getNoteColors();
   const notesElm = document.getElementById("notes");
   let html = "";
 
   notes.forEach((element, index) => {
+    const bgColor = noteColors[index] || '#FFFFFF'; // Default to white if color is not set
     html += `
-      <div class="noteCard my-2 mx-2 card" style="width: 18rem;">
+      <div class="noteCard my-2 mx-2 card" style="width: 18rem; background-color: ${bgColor};">
         <div class="card-body">
           <h5 class="card-title">Note ${index + 1}</h5>
           <p class="card-text">${element}</p>
@@ -181,23 +312,27 @@ function showNotes() {
         </div>
       </div>`;
   });
-  document.querySelector('#nothing').innerHTML = notes.length ? " " : `Nothing to show. Use "Add Notes" section above to add notes.`;
-  notesElm.innerHTML =  html ;
+  
+  document.querySelector('#nothing').innerHTML = notes.length ? "" : `Nothing to show. Use "Add Notes" section above to add notes.`;
+  notesElm.innerHTML = html;
 }
 
 function deleteNode(index) {
-  console.log("Deleted note " + (index + 1));
   let notes = getNotes();
+  let noteColors = getNoteColors();
+  
   notes.splice(index, 1);
-  saveNotes(notes);
+  noteColors.splice(index, 1);
+  
+  saveNotes(notes, noteColors);
   showNotes();
 }
 
 const searchTxt = document.getElementById('searchTxt');
 searchTxt.addEventListener('input', function () {
   const inputVal = searchTxt.value.toLowerCase();
-  console.log("input event fired", inputVal);
   const noteCards = document.getElementsByClassName('noteCard');
+  
   Array.from(noteCards).forEach((card) => {
     const cardText = card.getElementsByTagName('p')[0].innerText.toLowerCase();
     card.style.display = cardText.includes(inputVal) ? 'block' : 'none';
@@ -205,7 +340,6 @@ searchTxt.addEventListener('input', function () {
 });
 
 function editNode(id) {
-  console.log(id);
   const notes = getNotes();
   document.getElementById("addTxt").value = notes[id];
   updateId = id;
@@ -217,16 +351,22 @@ function getNotes() {
   return notes ? JSON.parse(notes) : [];
 }
 
-function saveNotes(notes) {
-  localStorage.setItem("notes", JSON.stringify(notes));
+function getNoteColors() {
+  let noteColors = localStorage.getItem("noteColors");
+  return noteColors ? JSON.parse(noteColors) : [];
 }
 
-// Animation
+function saveNotes(notes, noteColors) {
+  localStorage.setItem("notes", JSON.stringify(notes));
+  localStorage.setItem("noteColors", JSON.stringify(noteColors));
+}
+
+// Animation for welcome text
 let arr1 = ['W', 'e', 'l', 'c', 'o', 'm', 'e', ' ', 't', 'o', ' ', 'M', 'a', 'g', 'i', 'c', ' ', 'N', 'o', 't', 'e', 's', ' ', 'A', 'p', 'p', 'l', 'i', 'c', 'a', 't', 'i', 'o', 'n'];
 let ind1 = 0;
 let str = "";
 setInterval(() => {
-  if (arr1.length === ind1) { ind1 = 0; str = "" }
+  if (arr1.length === ind1) { ind1 = 0; str = ""; }
   str += arr1[ind1++];
   document.querySelector('.wel').innerHTML = str + '|';
 }, 80);
@@ -236,5 +376,3 @@ function deleteAll() {
   showNotes();
   window.alert('All Notes Deleted');
 }
-
-
