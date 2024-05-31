@@ -361,12 +361,13 @@ function saveNotes(notes, noteColors) {
   localStorage.setItem("noteColors", JSON.stringify(noteColors));
 }
 
+
 // Animation for welcome text
 let arr1 = ['W', 'e', 'l', 'c', 'o', 'm', 'e', ' ', 't', 'o', ' ', 'M', 'a', 'g', 'i', 'c', ' ', 'N', 'o', 't', 'e', 's', ' ', 'A', 'p', 'p', 'l', 'i', 'c', 'a', 't', 'i', 'o', 'n'];
 let ind1 = 0;
 let str = "";
-setInterval(() => {
-  if (arr1.length === ind1) { ind1 = 0; str = ""; }
+let intervalID = setInterval(() => {
+  if (arr1.length === ind1) { ind1 = 0; str = " "; }
   str += arr1[ind1++];
   document.querySelector('.wel').innerHTML = str + '|';
 }, 80);
@@ -376,3 +377,8 @@ function deleteAll() {
   showNotes();
   window.alert('All Notes Deleted');
 }
+
+setTimeout(()=>{
+  document.querySelector('.wel').style.display = 'none'
+  clearInterval(intervalID);
+},80*(arr1.length + 1))
