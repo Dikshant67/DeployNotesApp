@@ -303,9 +303,9 @@ function showNotes() {
   notes.forEach((element, index) => {
     const bgColor = noteColors[index] || '#FFFFFF'; // Default to white if color is not set
     html += `
-      <div class="noteCard my-2 mx-2 card" style="width: 18rem; background-color: ${bgColor};">
+      <div class="noteCard my-2 mx-2 card text-white border-secondary" style="width: 18rem; background-color: ${bgColor};">
         <div class="card-body">
-          <h5 class="card-title">Note ${index + 1}</h5>
+          <h5 class="card-title ">Note ${index + 1}</h5>
           <p class="card-text">${element}</p>
           <button id="${index}" onclick="deleteNode(${index})" class="btn btn-primary">Delete Note</button>
           <button id="${index}" onclick="editNode(${index})" class="btn btn-primary">Edit Note</button>
