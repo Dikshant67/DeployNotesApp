@@ -17,7 +17,7 @@
 //   localStorage.setItem("notes", JSON.stringify(notesObj));
 // }else{
 //     flag = true;
-//     notesObj[updateId] = addTxt.value  ; 
+//     notesObj[updateId] = addTxt.value  ;
 //     localStorage.setItem("notes", JSON.stringify(notesObj));
 //     updateId = -1 ;
 // }
@@ -40,7 +40,7 @@
 //   notesObj.forEach(function (element, index) {
 //     html += `
 //         <div class="noteCard my-2 mx-2 card" style="width: 18rem;">
-            
+
 //             <div class="card-body">
 //               <h5 class="card-title">Note ${index + 1}</h5>
 //               <p class="card-text">${element}</p>
@@ -50,7 +50,7 @@
 //             </div>
 
 //           </div>
-          
+
 //         `;
 //   });
 
@@ -82,7 +82,7 @@
 
 // function editNode(id){
 //     // flag = false;
-    
+
 //     console.log(id)
 //     let notes = localStorage.getItem("notes");
 //     if (notes == null) {
@@ -104,11 +104,10 @@
 //     let btnedit=document.querySelector('#addBtn');
 //     btnedit.innerHTML='Update Note'
 //     updateId = id ;
-    
 
 // }
 
-// // 
+// //
 
 // // console.log(head.innerHTML)
 // // console.log(head.innerText)
@@ -144,11 +143,9 @@
 // console.log("Welcome to Magic Notes App. This is app.js");
 // let clr = document.querySelector('#clr');
 
-
 // clr.addEventListener('input',()=>{
 //  color[clrIndex++] = clr.value;
 // })
-
 
 // let updateId = -1;
 
@@ -253,14 +250,14 @@
 //   window.alert('All Notes Deleted');
 // }
 
-
 let clrIndex = 0;
 var color = [];
 console.log("Welcome to Magic Notes App. This is app.js");
+let flag = true ;
 
 // Handle color input
-let clr = document.querySelector('#clr');
-clr.addEventListener('input', () => {
+let clr = document.querySelector("#clr");
+clr.addEventListener("input", () => {
   color[clrIndex++] = clr.value;
 });
 
@@ -271,23 +268,27 @@ addBtn.addEventListener("click", function () {
   const addTxt = document.getElementById("addTxt").value;
   let notes = getNotes();
   let noteColors = getNoteColors();
+  let noteDate = getNoteDate();
 
   if (addTxt.length !== 0) {
     if (updateId === -1) {
       notes.push(addTxt);
       noteColors.push(clr.value);
+      noteDate.push(new Date());
+      // console.log(Date.now());
     } else {
       notes[updateId] = addTxt;
       noteColors[updateId] = clr.value;
       updateId = -1;
       addBtn.innerHTML = "Add Note";
+      noteDate[updateId] = new Date();
     }
 
-    saveNotes(notes, noteColors);
+    saveNotes(notes, noteColors, noteDate);
   } else {
     alert("Enter at least one character");
   }
-  
+
   document.getElementById("addTxt").value = "";
   showNotes();
 });
@@ -297,14 +298,23 @@ showNotes();
 function showNotes() {
   const notes = getNotes();
   const noteColors = getNoteColors();
+  const noteDates = getNoteDate();
   const notesElm = document.getElementById("notes");
   let html = "";
 
   notes.forEach((element, index) => {
-    const bgColor = noteColors[index] || '#FFFFFF'; // Default to white if color is not set
+    const bgColor = noteColors[index] || "#FFFFFF"; // Default to white if color is not set
+    const noteDate1 =
+      new Date(noteDates[index]).getDate() +
+      "/" +
+      new Date(noteDates[index]).getMonth();
+
     html += `
       <div class="noteCard my-2 mx-2 card text-white border-secondary" style="width: 18rem; background-color: ${bgColor};">
         <div class="card-body">
+        <button class='star' onclick="toggleFlag()" > ${flag ? `<i class="fa-regular fa-star"></i>` :`<i class="fa-solid fa-star"></i>` } 
+        </button>
+           <!-- h4>${noteDate1}< /h4 -->
           <h5 class="card-title ">Note ${index + 1}</h5>
           <p class="card-text">${element}</p>
           <button id="${index}" onclick="deleteNode(${index})" class="btn btn-primary">Delete Note</button>
@@ -312,30 +322,32 @@ function showNotes() {
         </div>
       </div>`;
   });
-  
-  document.querySelector('#nothing').innerHTML = notes.length ? "" : `Nothing to show. Use "Add Notes" section above to add notes.`;
+
+  document.querySelector("#nothing").innerHTML = notes.length
+    ? ""
+    : `Nothing to show. Use "Add Notes" section above to add notes.`;
   notesElm.innerHTML = html;
 }
 
 function deleteNode(index) {
   let notes = getNotes();
   let noteColors = getNoteColors();
-  
+  let noteDate = getNoteDate();
   notes.splice(index, 1);
   noteColors.splice(index, 1);
-  
-  saveNotes(notes, noteColors);
+  noteDate.splice(index, 1);
+  saveNotes(notes, noteColors, noteDate);
   showNotes();
 }
 
-const searchTxt = document.getElementById('searchTxt');
-searchTxt.addEventListener('input', function () {
+const searchTxt = document.getElementById("searchTxt");
+searchTxt.addEventListener("input", function () {
   const inputVal = searchTxt.value.toLowerCase();
-  const noteCards = document.getElementsByClassName('noteCard');
-  
+  const noteCards = document.getElementsByClassName("noteCard");
+
   Array.from(noteCards).forEach((card) => {
-    const cardText = card.getElementsByTagName('p')[0].innerText.toLowerCase();
-    card.style.display = cardText.includes(inputVal) ? 'block' : 'none';
+    const cardText = card.getElementsByTagName("p")[0].innerText.toLowerCase();
+    card.style.display = cardText.includes(inputVal) ? "block" : "none";
   });
 });
 
@@ -343,7 +355,7 @@ function editNode(id) {
   const notes = getNotes();
   document.getElementById("addTxt").value = notes[id];
   updateId = id;
-  addBtn.innerHTML = 'Update Note';
+  addBtn.innerHTML = "Update Note";
 }
 
 function getNotes() {
@@ -355,30 +367,76 @@ function getNoteColors() {
   let noteColors = localStorage.getItem("noteColors");
   return noteColors ? JSON.parse(noteColors) : [];
 }
-
-function saveNotes(notes, noteColors) {
+function getNoteDate() {
+  let noteDate = localStorage.getItem("noteDate");
+  return noteDate ? JSON.parse(noteDate) : [];
+}
+function saveNotes(notes, noteColors, noteDate) {
   localStorage.setItem("notes", JSON.stringify(notes));
   localStorage.setItem("noteColors", JSON.stringify(noteColors));
+  localStorage.setItem("noteDate", JSON.stringify(noteDate));
 }
-
-
+function toggleFlag() {
+  flag = !flag;
+  showNotes();
+  // Redraw or update the UI element if necessary
+  // For example, if using a framework like React, you might need to trigger a re-render.
+}
 // Animation for welcome text
-let arr1 = ['W', 'e', 'l', 'c', 'o', 'm', 'e', ' ', 't', 'o', ' ', 'M', 'a', 'g', 'i', 'c', ' ', 'N', 'o', 't', 'e', 's', ' ', 'A', 'p', 'p', 'l', 'i', 'c', 'a', 't', 'i', 'o', 'n'];
+let arr1 = [
+  "W",
+  "e",
+  "l",
+  "c",
+  "o",
+  "m",
+  "e",
+  " ",
+  "t",
+  "o",
+  " ",
+  "M",
+  "a",
+  "g",
+  "i",
+  "c",
+  " ",
+  "N",
+  "o",
+  "t",
+  "e",
+  "s",
+  " ",
+  "A",
+  "p",
+  "p",
+  "l",
+  "i",
+  "c",
+  "a",
+  "t",
+  "i",
+  "o",
+  "n",
+];
 let ind1 = 0;
 let str = "";
 let intervalID = setInterval(() => {
-  if (arr1.length === ind1) { ind1 = 0; str = " "; }
+  if (arr1.length === ind1) {
+    ind1 = 0;
+    str = " ";
+  }
   str += arr1[ind1++];
-  document.querySelector('.wel').innerHTML = str + '|';
+  document.querySelector(".wel").innerHTML = str + "|";
 }, 80);
 
 function deleteAll() {
   localStorage.clear();
   showNotes();
-  window.alert('All Notes Deleted');
+  window.alert("All Notes Deleted");
 }
 
-setTimeout(()=>{
-  document.querySelector('.wel').style.display = 'none'
+setTimeout(() => {
+  document.querySelector(".wel").style.display = "none";
   clearInterval(intervalID);
-},80*(arr1.length + 1))
+}, 80 * (arr1.length + 1));
