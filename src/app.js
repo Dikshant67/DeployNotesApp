@@ -333,11 +333,15 @@ function deleteNode(index) {
   let notes = getNotes();
   let noteColors = getNoteColors();
   let noteDate = getNoteDate();
+  let IsStars = getIsStar();
   notes.splice(index, 1);
   noteColors.splice(index, 1);
   noteDate.splice(index, 1);
-  saveNotes(notes, noteColors, noteDate);
+  IsStars.splice(index, 1);
+  saveNotes(notes, noteColors, noteDate,IsStars);
   showNotes();
+  // IsStars[index]=false;
+  document.getElementById('count').innerText = count();
 }
 
 let favButton = document.getElementById("fav");
