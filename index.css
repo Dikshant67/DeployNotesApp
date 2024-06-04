@@ -1,0 +1,13 @@
+.noteCard{
+    position: relative;
+}
+
+.star{
+   position: absolute;
+   /* top: 0; */
+   right: 10px;
+}
+
+.star i{
+    font-size: 23px;
+}

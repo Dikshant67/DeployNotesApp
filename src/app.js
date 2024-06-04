@@ -253,7 +253,7 @@
 let clrIndex = 0;
 var color = [];
 console.log("Welcome to Magic Notes App. This is app.js");
-let flag = true ;
+let flag = true;
 
 // Handle color input
 let clr = document.querySelector("#clr");
@@ -269,12 +269,14 @@ addBtn.addEventListener("click", function () {
   let notes = getNotes();
   let noteColors = getNoteColors();
   let noteDate = getNoteDate();
+  let IsStars = getIsStar();
 
   if (addTxt.length !== 0) {
     if (updateId === -1) {
       notes.push(addTxt);
       noteColors.push(clr.value);
       noteDate.push(new Date());
+      IsStars.push(false);
       // console.log(Date.now());
     } else {
       notes[updateId] = addTxt;
@@ -284,7 +286,7 @@ addBtn.addEventListener("click", function () {
       noteDate[updateId] = new Date();
     }
 
-    saveNotes(notes, noteColors, noteDate);
+    saveNotes(notes, noteColors, noteDate, IsStars);
   } else {
     alert("Enter at least one character");
   }
@@ -300,20 +302,18 @@ function showNotes() {
   const noteColors = getNoteColors();
   const noteDates = getNoteDate();
   const notesElm = document.getElementById("notes");
+  const IsStars = getIsStar();
   let html = "";
 
   notes.forEach((element, index) => {
     const bgColor = noteColors[index] || "#FFFFFF"; // Default to white if color is not set
-    const noteDate1 =
-      new Date(noteDates[index]).getDate() +
-      "/" +
-      new Date(noteDates[index]).getMonth();
-
+    const noteDate1 = new Date(noteDates[index]).getDate() + "/" + new Date(noteDates[index]).getMonth();
+    const isStar = IsStars[index];
     html += `
       <div class="noteCard my-2 mx-2 card text-white border-secondary" style="width: 18rem; background-color: ${bgColor};">
         <div class="card-body">
-        <button class='star' onclick="toggleFlag()" > ${flag ? `<i class="fa-regular fa-star"></i>` :`<i class="fa-solid fa-star"></i>` } 
-        </button>
+        <div class='star' onclick="toggleFlag(${index})" > ${isStar ? `<i class="fa-solid fa-star"></i>` : `<i class="fa-regular fa-star"></i>`} 
+        </div>
            <!-- h4>${noteDate1}< /h4 -->
           <h5 class="card-title ">Note ${index + 1}</h5>
           <p class="card-text">${element}</p>
@@ -339,6 +339,35 @@ function deleteNode(index) {
   saveNotes(notes, noteColors, noteDate);
   showNotes();
 }
+
+let favButton = document.getElementById("fav");
+favButton.addEventListener("click",function favAll(event){
+  event.preventDefault();
+
+  let IsStars = getIsStar();
+  const noteCards = document.getElementsByClassName("noteCard");
+  if(flag){
+  Array.from(noteCards).forEach((element, index) => {
+      element.style.display = IsStars[index] == true ? "block" : "none";
+      favButton.innerText = 'All Notes'
+      flag = false;
+  })
+  }else{
+    Array.from(noteCards).forEach((element, index) => {
+      element.style.display = true ? "block" : "none";
+      favButton.innerHTML = 'Favourite Notes  [ <span id="count" style="font-weight: 900;"></span> ]'
+      document.getElementById('count').innerText = count();
+      flag = true;
+  })
+  }
+  
+})
+
+let count = ()=>{
+  let IsStars = getIsStar();
+  return IsStars.filter(element => element).length;
+};
+
 
 const searchTxt = document.getElementById("searchTxt");
 searchTxt.addEventListener("input", function () {
@@ -371,16 +400,25 @@ function getNoteDate() {
   let noteDate = localStorage.getItem("noteDate");
   return noteDate ? JSON.parse(noteDate) : [];
 }
-function saveNotes(notes, noteColors, noteDate) {
+function getIsStar() {
+  let IsStar = localStorage.getItem("IsStar");
+  return IsStar ? JSON.parse(IsStar) : [];
+}
+function saveNotes(notes, noteColors, noteDate, IsStar) {
   localStorage.setItem("notes", JSON.stringify(notes));
   localStorage.setItem("noteColors", JSON.stringify(noteColors));
   localStorage.setItem("noteDate", JSON.stringify(noteDate));
+  localStorage.setItem("IsStar", JSON.stringify(IsStar));
 }
-function toggleFlag() {
-  flag = !flag;
+document.getElementById('count').innerText = count();
+function toggleFlag(id) {
+  console.log("toggleFlag")
+  let isStars = getIsStar();
+  let fl = !isStars[id];
+  isStars[id] = fl;
+  localStorage.setItem("IsStar", JSON.stringify(isStars));
+  document.getElementById('count').innerText = count();
   showNotes();
-  // Redraw or update the UI element if necessary
-  // For example, if using a framework like React, you might need to trigger a re-render.
 }
 // Animation for welcome text
 let arr1 = [
