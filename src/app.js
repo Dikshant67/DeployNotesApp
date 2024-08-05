@@ -482,3 +482,4 @@ setTimeout(() => {
   document.querySelector(".wel").style.display = "none";
   clearInterval(intervalID);
 }, 80 * (arr1.length + 1));
+//this is just for demo purpose 
